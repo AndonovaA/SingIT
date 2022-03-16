@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">SingIT</string>
+    <string name="welcome">Welcome to Sing It!</string>
+    <string name="username_or_email">Username or email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="logo">logo</string>
+    <string name="singup">Sing up</string>
+    <string name="don_t_have_an_account">Don\'t have an account? Sign up</string>
+    <string name="already_have_an_account">Already have an account? Login</string>
+    <string name="username">Username</string>
+    <string name="email">Email</string>
 </resources>
