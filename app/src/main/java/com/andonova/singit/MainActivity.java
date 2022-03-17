@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         binding.goToLogin.setOnClickListener(view -> {
             startActivity(new Intent(this, LoginActivity.class));
+            finish();
         });
         binding.signupBtn.setOnClickListener(view -> {
             validateData();
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         password = binding.passwordEditText.getText().toString().trim();
 
         if(TextUtils.isEmpty(name)){
-            binding.usernameEditText.setError("Username is empty!");
+            binding.usernameEditText.setError("Please provide username!");
         }
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             binding.emailEditText.setError("Please provide valid email!");
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /***
-     * Create user account with firebase authentication
+     * Create user account with firebase authentication.
      */
     private void createUserAccount() {
 
@@ -110,7 +111,9 @@ public class MainActivity extends AppCompatActivity {
                 .setValue(hashMap)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(MainActivity.this, "User has been registered successfully!", Toast.LENGTH_SHORT).show();
-                    // TODO: go to home page
+                    // go to login page
+                    startActivity(new Intent(this, LoginActivity.class));
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(MainActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();

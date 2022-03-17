@@ -19,24 +19,24 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/username_email_input"
+        android:id="@+id/email_input"
         android:layout_marginTop="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo">
+
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/username_email_edit_text"
-            android:padding="20dp"
-            android:hint="@string/username_or_email"
+            android:autofillHints="emailAddress"
             android:drawableStart="@drawable/ic_baseline_person_outline_black"
             android:drawablePadding="20dp"
-            android:inputType="textEmailAddress|textPersonName"
-            android:autofillHints="emailAddress|username">
-        </com.google.android.material.textfield.TextInputEditText>
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="20dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -46,7 +46,7 @@
         android:layout_margin="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/username_email_input"
+        app:layout_constraintTop_toBottomOf="@id/email_input"
         app:passwordToggleEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
