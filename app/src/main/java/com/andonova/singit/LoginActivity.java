@@ -8,11 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
-
 import com.andonova.singit.databinding.ActivityLoginBinding;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,8 +26,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     //user input values
-    String email = " ";
-    String password = " ";
+    private String email = " ";
+    private String password = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +51,10 @@ public class LoginActivity extends AppCompatActivity {
         binding.loginBtn.setOnClickListener(view -> {
             validateData();
         });
+
+        binding.forgotPassword.setOnClickListener(view -> {
+            startActivity(new Intent(this, ForgotPasswordActivity.class));
+        });
     }
 
     /***
@@ -65,10 +65,10 @@ public class LoginActivity extends AppCompatActivity {
         password = binding.passwordEditText.getText().toString().trim();
 
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            binding.emailEditText.setError("Please provide valid email!");
+            binding.emailEditText.setError("Please provide valid email.");
         }
         else if(TextUtils.isEmpty(password)){
-            binding.passwordEditText.setError("Please provide password!");
+            binding.passwordEditText.setError("Please provide password.");
         }
         else{
             loginUser();

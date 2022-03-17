@@ -10,7 +10,6 @@ import com.andonova.singit.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.HashMap;
 
 
@@ -22,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     //user input values
-    String name = " ";
-    String email = " ";
-    String password = " ";
+    private String name = " ";
+    private String email = " ";
+    private String password = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +57,16 @@ public class MainActivity extends AppCompatActivity {
         password = binding.passwordEditText.getText().toString().trim();
 
         if(TextUtils.isEmpty(name)){
-            binding.usernameEditText.setError("Please provide username!");
+            binding.usernameEditText.setError("Please provide username.");
         }
         else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            binding.emailEditText.setError("Please provide valid email!");
+            binding.emailEditText.setError("Please provide valid email.");
         }
         else if(TextUtils.isEmpty(password)){
-            binding.passwordEditText.setError("Please provide password!");
+            binding.passwordEditText.setError("Please provide password.");
         }
         else if(password.length() < 6){
-            binding.passwordEditText.setError("Password must have minimum 6 characters!");
+            binding.passwordEditText.setError("Password must have minimum 6 characters.");
         }
         else{
             createUserAccount();
