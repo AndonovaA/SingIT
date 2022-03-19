@@ -12,4 +12,9 @@
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="submit">submit</string>
+    <string name="appbar_title">Library</string>
+    <string name="search">Search</string>
+    <string name="content_description_search">Search for song</string>
+    <string name="account_profile">Account Profile Settings</string>
+    <string name="content_description_settings">Settings</string>
 </resources>

@@ -32,12 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         //initialize firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkUserCredentials();
-            }
-        }, 2000);
+        new Handler().postDelayed(this::checkUserCredentials, 2000);
     }
 
     private void checkUserCredentials(){
@@ -59,8 +54,10 @@ public class SplashActivity extends AppCompatActivity {
                             String userType = "" + snapshot.child("userType").getValue();
                             //check user type
                             if (userType.equals("user")){
-                                //TODO: open home page
                                 Log.d("SplashActivity", "user logged!");
+                                // open Songs Library
+                                startActivity(new Intent(SplashActivity.this, LibraryActivity.class));
+                                finish();
                             }
                             else if(userType.equals("admin")){
                                 //TODO: open admin page

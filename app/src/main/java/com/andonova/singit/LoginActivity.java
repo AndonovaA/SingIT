@@ -106,8 +106,10 @@ public class LoginActivity extends AppCompatActivity {
                         String userType = "" + snapshot.child("userType").getValue();
                         //check user type
                         if (userType.equals("user")){
-                            //TODO: open home page
                             Log.d("LoginActivity", "user logged!");
+                            // open Songs Library
+                            startActivity(new Intent(LoginActivity.this, LibraryActivity.class));
+                            finish();
                         }
                         else if(userType.equals("admin")){
                             //TODO: open admin page
