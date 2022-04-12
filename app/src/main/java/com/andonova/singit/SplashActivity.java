@@ -54,7 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                             String userType = "" + snapshot.child("userType").getValue();
                             //check user type
                             if (userType.equals("user")){
-                                Log.d("SplashActivity", "user logged!");
+                                Log.d("SplashActivity", "user " + firebaseUser.getUid() + " logged!");
                                 // open Songs Library
                                 startActivity(new Intent(SplashActivity.this, LibraryActivity.class));
                                 finish();
