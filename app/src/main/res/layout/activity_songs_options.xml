@@ -3,6 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SongsOptionsActivity">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/upload_song_btn"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_song_from_phone"
+        android:layout_marginTop="220dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/search_youtube_btn"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:text="@string/search_for_a_song_on_youtube"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_song_btn" />
+
+    <TextView
+        android:id="@+id/go_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/go_back_to_library"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

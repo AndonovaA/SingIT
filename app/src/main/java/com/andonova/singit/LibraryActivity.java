@@ -25,7 +25,6 @@ import java.util.List;
 public class LibraryActivity extends AppCompatActivity {
 
     String TAG = "LibraryActivity";
-
     ActivityLibraryBinding binding;
 
     // Object of the Firebase Storage
@@ -63,22 +62,22 @@ public class LibraryActivity extends AppCompatActivity {
 
             // Initializing recycler view adapter
             songsList = new ArrayList<>();
+            adapter = new SongsRecyclerAdapter(songsList, binding.getRoot().getContext());
+            binding.recyclerView.setAdapter(adapter);
+
             if (storageRef != null) {
                 storageRef.listAll()
                         .addOnSuccessListener(listResult -> {
                             for (StorageReference item : listResult.getItems()) {
-                                // All the items under storageRef
                                 String songName = FilenameUtils.removeExtension(item.getName());
-                                songsList.add(new SongItem(songName));
+                                item.getDownloadUrl().addOnSuccessListener(uri -> {
+                                    Log.d(TAG, "PATH: " + uri.toString());
+                                    songsList.add(new SongItem(songName, uri));
+                                    adapter.updateList(songsList);
+                                }).addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
                             }
-                            adapter = new SongsRecyclerAdapter(songsList, binding.getRoot().getContext());
-                            binding.recyclerView.setAdapter(adapter);
                         })
                         .addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
-            } else {
-                // Display no songs
-                adapter = new SongsRecyclerAdapter(songsList, binding.getRoot().getContext());
-                binding.recyclerView.setAdapter(adapter);
             }
         }
     }
