@@ -3,6 +3,9 @@ package com.andonova.singit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -40,6 +43,7 @@ public class LibraryActivity extends AppCompatActivity {
 
         binding = ActivityLibraryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.topAppBar);
 
         init();
         setComponents();
@@ -71,7 +75,6 @@ public class LibraryActivity extends AppCompatActivity {
                             for (StorageReference item : listResult.getItems()) {
                                 String songName = FilenameUtils.removeExtension(item.getName());
                                 item.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    Log.d(TAG, "PATH: " + uri.toString());
                                     songsList.add(new SongItem(songName, uri));
                                     adapter.updateList(songsList);
                                 }).addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
@@ -104,5 +107,28 @@ public class LibraryActivity extends AppCompatActivity {
         // When no user is logged, redirect to Login page
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.top_app_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                // TODO: search through the recycler view
+                return true;
+            case R.id.settings:
+                startActivity(new Intent(this, AccountSettingsActivity.class));
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

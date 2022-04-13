@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.andonova.singit">
-
     <!-- For MediaPlayer to stream network-based content. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Player application needs to keep the screen from dimming or the processor from sleeping -->
@@ -14,6 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SingIT">
+        <activity
+            android:name=".AccountSettingsActivity"
+            android:exported="false" />
         <activity
             android:name=".SongsOptionsActivity"
             android:exported="false" />
