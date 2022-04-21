@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.chaquo.python'
     id 'com.google.gms.google-services'
 }
 
@@ -13,6 +14,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        python {
+            pip {
+//                install "spleeter==2.3.0"
+            }
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
     }
 
     buildTypes {
@@ -27,6 +36,11 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    buildToolsVersion '32.0.0'
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
     }
 }
 
