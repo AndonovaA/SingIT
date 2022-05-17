@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -58,10 +59,11 @@ public class LibraryActivity extends AppCompatActivity {
         // Set up Cloud Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
+
         if (firebaseUser == null) {
             redirectToLoginPage();
         } else {
-            // Create a Cloud Storage reference from the app fpr the specific user if logged
+            // Create a Cloud Storage reference from the app for the specific user if logged
             storageRef = storage.getReference().child(firebaseUser.getUid());
 
             // Initializing recycler view adapter
@@ -70,7 +72,8 @@ public class LibraryActivity extends AppCompatActivity {
             binding.recyclerView.setAdapter(adapter);
 
             if (storageRef != null) {
-                storageRef.listAll()
+                StorageReference songsStorageReference = storageRef.child("songs");
+                songsStorageReference.listAll()
                         .addOnSuccessListener(listResult -> {
                             for (StorageReference item : listResult.getItems()) {
                                 String songName = FilenameUtils.removeExtension(item.getName());
@@ -81,6 +84,19 @@ public class LibraryActivity extends AppCompatActivity {
                             }
                         })
                         .addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
+            }
+            Intent convertingSong = getIntent();
+            if (convertingSong != null) {
+                Bundle extras = convertingSong.getExtras();
+                if (extras != null) {
+                    String loadingSongName = extras.getString("loadingSong");
+                    if (loadingSongName != null) {
+                        // TODO: add item to the adapter with loadingSongName and a progress bar
+                        // loadingSongName is the song which is currently converting to instrumental
+                        // et the end refresh the adapter
+                        Toast.makeText(this, "Song in progress: " + loadingSongName, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         }
     }

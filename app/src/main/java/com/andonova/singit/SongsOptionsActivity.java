@@ -13,22 +13,21 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import com.andonova.singit.databinding.ActivitySongsOptionsBinding;
-import com.chaquo.python.PyObject;
-import com.chaquo.python.Python;
+import com.andonova.singit.helpers.ConvertToKaraoke;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
+import java.util.HashMap;
 
 
-public class SongsOptionsActivity extends AppCompatActivity {
+public class SongsOptionsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<HashMap<String, Boolean>> {
 
     String TAG = "SongsOptionsActivity";
     ActivitySongsOptionsBinding binding;
@@ -59,6 +58,11 @@ public class SongsOptionsActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setEventListeners();
+
+        //Check if a Loader is running, if yes, then reconnect to it
+        if (getSupportLoaderManager().getLoader(0) != null) {
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
     }
 
     private void setEventListeners() {
@@ -82,6 +86,7 @@ public class SongsOptionsActivity extends AppCompatActivity {
 
     /**
      * Establish connection to a backend that converts a song with audioUri, to karaoke.
+     * This is done using AsyncTaskLoader.
      *
      * @param audioUri The Uri to query.
      */
@@ -93,23 +98,16 @@ public class SongsOptionsActivity extends AppCompatActivity {
             File songFile = new File(fullPath);
             if (songFile.exists()) {
                 Log.d(TAG, "File exists. Path: " + fullPath);
-
-                try {
-                    InputStream inputStream = new FileInputStream(fullPath);
-                    byte[] songBytes = getBytesFromInputStream(inputStream);
-                    String songBytesString = Base64.getEncoder().encodeToString(songBytes);
-
-                    Python mPython = Python.getInstance();
-                    PyObject pythonFile = mPython.getModule("removeVocals");
-                    PyObject result = pythonFile.callAttr("main", songBytesString);
-                    String instrumentalSongBytesString = result.toString();
-                    byte[] instrumentalSongBytes = Base64.getDecoder().decode(instrumentalSongBytesString);
-                    // TODO: upload instrumental song to firebase storage,
-                    // but first put python script in a background thread !!!
-
-                } catch (IOException e) {
-                    Log.d(TAG, e.toString());
-                }
+                Bundle queryBundle = new Bundle();
+                queryBundle.putString("songURI", fullPath);
+                //start the loader (pass the bundle as parameter):
+                getSupportLoaderManager().restartLoader(0, queryBundle, this);
+                //open the songs library
+                Intent toLibrary = new Intent(SongsOptionsActivity.this, LibraryActivity.class);
+                String songName = getSongName(fullPath);
+                toLibrary.putExtra("loadingSong", songName);
+                startActivity(toLibrary);
+                finish();   // TODO: not sure?
             } else {
                 Toast.makeText(SongsOptionsActivity.this, "Failed to upload song.", Toast.LENGTH_SHORT).show();
             }
@@ -135,18 +133,56 @@ public class SongsOptionsActivity extends AppCompatActivity {
         return null;
     }
 
-    /**
-     * @param is For reading bytes from audio file.
-     * @return Byte array with the bytes from the audio file.
-     * @throws IOException If the buffer is empty.
+    private String getSongName(String songUrl) {
+        String[] pathElements = songUrl.split("/");
+        String fileName = pathElements[pathElements.length - 1];
+        return fileName.substring(0, fileName.lastIndexOf('.')).replaceAll("[^A-Za-z0-9]", " ");
+    }
+
+
+    /*
+      Loader Callbacks
      */
-    public static byte[] getBytesFromInputStream(InputStream is) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte[] buffer = new byte[0xFFFF];
-        for (int len = is.read(buffer); len != -1; len = is.read(buffer)) {
-            os.write(buffer, 0, len);
+
+    /**
+     * The LoaderManager calls this method when the loader is created.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Returns a new ConvertToKaraoke loader containing the song uri.
+     */
+    @NonNull
+    @Override
+    public Loader<HashMap<String, Boolean>> onCreateLoader(int id, @Nullable Bundle args) {
+        assert args != null;
+        return new ConvertToKaraoke(this, args.getString("songURI"), SongsOptionsActivity.this);
+    }
+
+    /**
+     * Called when the data has been loaded. As parameter, gets Null or OK message.
+     * Used for updating the UI.
+     *
+     * @param loader The loader that has finished
+     * @param data   The message response (Null or OK)
+     */
+    @Override
+    public void onLoadFinished(@NonNull Loader<HashMap<String, Boolean>> loader, @NonNull HashMap<String, Boolean> data) {
+        // ne stiga do ovaa funkcija
+        if (data.getOrDefault("isSongConverted", false) && data.getOrDefault("isLyricDownloaded", false)) {
+            Toast.makeText(this, "Successfully converted!", Toast.LENGTH_SHORT).show();
+            //TODO: update the recycler view
+        } else {
+            Toast.makeText(this, "Failed to convert the song!", Toast.LENGTH_SHORT).show();
         }
-        return os.toByteArray();
+    }
+
+    /**
+     * In this case there are no variables to clean up when the loader is reset.
+     *
+     * @param loader The loader that was reset.
+     */
+    @Override
+    public void onLoaderReset(@NonNull Loader<HashMap<String, Boolean>> loader) {
     }
 
 }
