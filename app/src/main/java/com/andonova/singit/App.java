@@ -3,6 +3,8 @@ package com.andonova.singit;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 
@@ -16,6 +18,7 @@ public class App extends Application {
         super.onCreate();
         mContext = getApplicationContext();
         initPython();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
     }
 
     private void initPython() {
