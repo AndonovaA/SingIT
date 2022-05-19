@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.andonova.singit.adapters.SongsRecyclerAdapter;
 import com.andonova.singit.databinding.ActivityLibraryBinding;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LibraryActivity extends AppCompatActivity {
+public class LibraryActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     String TAG = "LibraryActivity";
     ActivityLibraryBinding binding;
@@ -36,6 +36,7 @@ public class LibraryActivity extends AppCompatActivity {
     // Object of the Adapter class
     SongsRecyclerAdapter adapter;
     List<SongItem> songsList;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
 
     @Override
@@ -72,18 +73,7 @@ public class LibraryActivity extends AppCompatActivity {
             binding.recyclerView.setAdapter(adapter);
 
             if (storageRef != null) {
-                StorageReference songsStorageReference = storageRef.child("songs");
-                songsStorageReference.listAll()
-                        .addOnSuccessListener(listResult -> {
-                            for (StorageReference item : listResult.getItems()) {
-                                String songName = FilenameUtils.removeExtension(item.getName());
-                                item.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    songsList.add(new SongItem(songName, uri));
-                                    adapter.updateList(songsList);
-                                }).addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
-                            }
-                        })
-                        .addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
+                fetchSongsFromFirebaseStorage();
             }
             Intent convertingSong = getIntent();
             if (convertingSong != null) {
@@ -93,20 +83,42 @@ public class LibraryActivity extends AppCompatActivity {
                     if (loadingSongName != null) {
                         // TODO: add item to the adapter with loadingSongName and a progress bar
                         // loadingSongName is the song which is currently converting to instrumental
-                        // et the end refresh the adapter
+                        // at the end refresh the adapter
                         Toast.makeText(this, "Song in progress: " + loadingSongName, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         }
+
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout = binding.swipe;
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+    }
+
+    private void fetchSongsFromFirebaseStorage() {
+        songsList = new ArrayList<>();
+        StorageReference songsStorageReference = storageRef.child("songs");
+        songsStorageReference.listAll()
+                .addOnSuccessListener(listResult -> {
+                    for (StorageReference item : listResult.getItems()) {
+                        String songName = FilenameUtils.removeExtension(item.getName());
+                        item.getDownloadUrl().addOnSuccessListener(uri -> {
+                            songsList.add(new SongItem(songName, uri));
+                            songsList.sort((lsongItem, rsongItem) ->
+                                    lsongItem.getSongName().compareToIgnoreCase(rsongItem.getSongName()));
+                            adapter.updateList(songsList);
+                        }).addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
+                    }
+                })
+                .addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
     }
 
     private void setComponents() {
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         binding.recyclerView.setLayoutManager(mLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
                 binding.recyclerView.getContext(),
-                ((LinearLayoutManager) mLayoutManager).getOrientation()
+                mLayoutManager.getOrientation()
         );
         binding.recyclerView.addItemDecoration(dividerItemDecoration);
     }
@@ -114,9 +126,7 @@ public class LibraryActivity extends AppCompatActivity {
 
     private void setEventListeners() {
 
-        binding.addSong.setOnClickListener(view -> {
-            startActivity(new Intent(LibraryActivity.this, SongsOptionsActivity.class));
-        });
+        binding.addSong.setOnClickListener(view -> startActivity(new Intent(LibraryActivity.this, SongsOptionsActivity.class)));
     }
 
     private void redirectToLoginPage() {
@@ -146,5 +156,12 @@ public class LibraryActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        fetchSongsFromFirebaseStorage();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }
