@@ -1,19 +1,17 @@
 package com.andonova.singit.adapters;
 
 import android.content.Context;
-import android.media.AudioAttributes;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.andonova.singit.MediaPlayerActivity;
 import com.andonova.singit.databinding.SongItemBinding;
 import com.andonova.singit.models.SongItem;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -72,23 +70,11 @@ public class SongsRecyclerAdapter extends RecyclerView.Adapter<SongsRecyclerAdap
 
             binding.getRoot().setOnClickListener(view -> {
                 SongItem songItem = getSongItem(getAdapterPosition());
-                String songName = songItem.getSongName();
-                Uri AudioUri = songItem.getSongHTTPurl();
-
-                // TODO: open music player with the song:
-                MediaPlayer mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioAttributes(
-                        new AudioAttributes.Builder()
-                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .setUsage(AudioAttributes.USAGE_MEDIA)
-                                .build());
-                try {
-                    mediaPlayer.setDataSource(activity, AudioUri);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // Open music player with the song:
+                Intent toMediaPlayer = new Intent(activity, MediaPlayerActivity.class);
+                toMediaPlayer.putExtra("songItemName", songItem.getSongName());
+                toMediaPlayer.putExtra("songItemUrl", songItem.getSongHTTPurl().toString());
+                activity.startActivity(toMediaPlayer);
             });
 
             // TODO: On long click promp a dialog for deleting the song

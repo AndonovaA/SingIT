@@ -23,4 +23,5 @@
     <string name="search_for_a_song_on_youtube">Search for a song on YouTube</string>
     <string name="go_back_to_library">Go back to library</string>
     <string name="logout">Logout</string>
+    <string name="lyrics">lyrics</string>
 </resources>
