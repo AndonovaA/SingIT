@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 
 
 /**
@@ -31,12 +32,14 @@ public class LyricsDownloader {
 
     private static final String TAG = "LyricsDownloader";
 
+    private static String lyricsType = "lrc";
+
     /***
      * Getting the lyrics of a song.
      * @param songFileName - name of the song file for which the lyrics should be downloaded.
      * @return if found returns the lyric in String, otherwise returns empty String ("")
      */
-    public static String findLyrics(String songFileName) {
+    public static HashMap<String, String> findLyrics(String songFileName) {
 
         String lyrics;
 
@@ -88,11 +91,17 @@ public class LyricsDownloader {
             lyrics = lrcLyrics(titleLinkElement);
         }
 
-        return lyrics;
+        HashMap<String, String> result = new HashMap<>();
+        result.put("lyrics", lyrics);
+        result.put("type", lyricsType);
+
+        return result;
     }
 
 
     private static String lrcLyrics(Element titleLinkElement) {
+
+        lyricsType = "lrc";
 
         String secondPageHTML = "";
         String urlSongLyrics = titleLinkElement.attr("href");
@@ -133,6 +142,8 @@ public class LyricsDownloader {
 
 
     public static String textLyrics(String songFileName) {
+
+        lyricsType = "txt";
 
         String songName = "";
         String songArtist = "";

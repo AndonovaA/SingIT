@@ -9,10 +9,12 @@ import androidx.loader.content.AsyncTaskLoader;
 import com.andonova.singit.SongsOptionsActivity;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -91,15 +93,20 @@ public class ConvertToKaraoke extends AsyncTaskLoader<HashMap<String, Boolean>> 
     private boolean downloadLyrics(boolean notLrc) {
 
         String lyric;
-        String songFileName = getSongName();
-        if (notLrc)
-            lyric = LyricsDownloader.textLyrics(songFileName);
-        else
-            lyric = LyricsDownloader.findLyrics(songFileName);
+        String lyricType;
 
-        if (!lyric.equals("")) {
+        String songFileName = getSongName();
+        if (notLrc) {
+            lyric = LyricsDownloader.textLyrics(songFileName);
+            lyricType = "txt";
+        } else {
+            lyric = LyricsDownloader.findLyrics(songFileName).get("lyrics");
+            lyricType = LyricsDownloader.findLyrics(songFileName).get("type");
+        }
+
+        if (lyric != null && !lyric.equals("")) {
             // Upload the lyric to firebase storage in format of a txt file:
-            return uploadLyricsToFirebaseStorage(lyric, songFileName);
+            return uploadLyricsToFirebaseStorage(lyric, songFileName, lyricType);
         }
 
         return false;
@@ -158,7 +165,7 @@ public class ConvertToKaraoke extends AsyncTaskLoader<HashMap<String, Boolean>> 
     }
 
 
-    private boolean uploadLyricsToFirebaseStorage(String lyric, String songName) {
+    private boolean uploadLyricsToFirebaseStorage(String lyric, String songName, String lyricType) {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -173,14 +180,21 @@ public class ConvertToKaraoke extends AsyncTaskLoader<HashMap<String, Boolean>> 
             try {
                 Tasks.await(uploadTask, 5, TimeUnit.MINUTES);
                 Log.d(TAG, "Lyrics uploaded successfully!");
+
+                // Create file metadata
+                StorageMetadata metadata = new StorageMetadata.Builder()
+                        .setCustomMetadata("lyricType", lyricType)
+                        .build();
+                // Update metadata properties
+                Task<StorageMetadata> uploadMetadataTask = lyricsRef.updateMetadata(metadata);
+                Tasks.await(uploadMetadataTask, 3, TimeUnit.MINUTES);
                 return true;
 
             } catch (ExecutionException | InterruptedException | TimeoutException e) {
-                Log.d(TAG, "Lyrics failed to upload: " + e.getMessage());
+                Log.d(TAG, "Lyrics failed to upload or(and) couldn't update metadata: " + e.getMessage());
                 return false;
             }
         }
         return false;
     }
-
 }
