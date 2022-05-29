@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.andonova.singit.adapters.SongsRecyclerAdapter;
 import com.andonova.singit.databinding.ActivityLibraryBinding;
+import com.andonova.singit.helpers.Common;
 import com.andonova.singit.models.SongItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -107,6 +108,9 @@ public class LibraryActivity extends AppCompatActivity implements SwipeRefreshLa
                             songsList.sort((lsongItem, rsongItem) ->
                                     lsongItem.getSongName().compareToIgnoreCase(rsongItem.getSongName()));
                             adapter.updateList(songsList);
+                            // Save the songs in array from the singleton class Common
+                            Common.getInstance().songs = new ArrayList<>();
+                            Common.getInstance().songs.addAll(songsList);
                         }).addOnFailureListener(e -> Log.d(TAG, e.getMessage()));
                     }
                 })
