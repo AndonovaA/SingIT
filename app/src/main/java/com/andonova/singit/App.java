@@ -17,8 +17,11 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
-        initPython();
+
+        // Set the dark app theme
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+        initPython();
     }
 
     private void initPython() {

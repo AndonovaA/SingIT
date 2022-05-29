@@ -24,4 +24,8 @@
     <string name="go_back_to_library">Go back to library</string>
     <string name="logout">Logout</string>
     <string name="lyrics">lyrics</string>
+    <string name="playButton">playButton</string>
+    <string name="skipPreviousButton">skipPreviousButton</string>
+    <string name="skipNextButton">skipNextButton</string>
+    <string name="playSkipButton">play skip button</string>
 </resources>

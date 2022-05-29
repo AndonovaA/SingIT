@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediaPlayerActivity">
+    tools:context=".MediaPlayerActivity"
+    android:background="@drawable/player_background">
 
     <com.andonova.singit.LrcView.LrcView
         android:id="@+id/lrc_lyrics_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="visible"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/media_player"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <ScrollView
         android:id="@+id/text_lyrics_scroll_view"
@@ -21,6 +23,8 @@
         app:layout_constraintBottom_toTopOf="@id/media_player"
         app:layout_constraintTop_toTopOf="parent"
         android:scrollbars="vertical"
+        android:visibility="invisible"
+        android:layout_marginBottom="20dp"
         android:fillViewport="true">
 
         <TextView
@@ -30,16 +34,123 @@
             android:textAlignment="center"
             android:layout_gravity="center_vertical|center_horizontal"
             android:textSize="20sp"
+            android:textColor="@color/white"
             android:text="@string/lyrics" />
     </ScrollView>
 
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/media_player"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <TextView
+            android:id="@+id/song_name_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="20dp"
+            android:textColor="@color/gray_500"
+            android:textSize="15sp"
+            android:text="@string/song_name" />
+
+        <TextView
+            android:id="@+id/current_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="0:00"
+            android:textSize="11sp"
+            android:textColor="@color/gray_500"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/seek_bar"
+            app:layout_constraintTop_toTopOf="@id/seek_bar" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressBackgroundTint="@color/gray_500"
+            android:progressTint="@color/gray_200"
+            android:thumbTint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/song_name_player"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp" />
+
+        <TextView
+            android:id="@+id/duration_till_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:text="2:40"
+            android:textSize="11sp"
+            android:textColor="@color/gray_500"
+            app:layout_constraintStart_toEndOf="@id/seek_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/seek_bar" />
+
+        <ImageButton
+            android:id="@+id/skip_prev_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/play_pause_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play_pause_btn"
+            android:scaleType="fitEnd"
+            android:background="@null"
+            android:src="@drawable/ic_baseline_skip_previous"
+            android:contentDescription="@string/skipPreviousButton" />
+
+        <!--        <ImageButton
+                    android:id="@+id/play_btn"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:scaleType="fitEnd"
+                    android:background="@color/material_on_background_disabled"
+                    android:src="@drawable/ic_baseline_play_circle_filled"
+                    android:contentDescription="@string/playButton" />-->
+
+        <ImageButton
+            android:id="@+id/play_pause_btn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="fitEnd"
+            android:background="@null"
+            android:src="@drawable/ic_baseline_pause_circle_filled"
+            android:contentDescription="@string/playSkipButton" />
+
+        <ImageButton
+            android:id="@+id/skip_next_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintStart_toEndOf="@id/play_pause_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play_pause_btn"
+            android:scaleType="fitEnd"
+            android:background="@null"
+            android:src="@drawable/ic_baseline_skip_next"
+            android:contentDescription="@string/skipNextButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
